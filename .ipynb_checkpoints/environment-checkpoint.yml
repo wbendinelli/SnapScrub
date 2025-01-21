@@ -1,0 +1,22 @@
+name: snapscrub
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python
+  - numpy
+  - pandas
+  - opencv
+  - pytorch
+  - torchvision
+  - tensorflow
+  - scikit-image
+  - jupyterlab
+  - tqdm
+  - pip
+  - pyheif
+  - pillow-heif
+  - pip:
+      - torch
+      - transformers
+      - pillow
