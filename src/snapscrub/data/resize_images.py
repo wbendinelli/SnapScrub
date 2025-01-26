@@ -27,7 +27,7 @@ def resize_images(folder_path, output_path, size=(256, 256)):
     else:
         os.makedirs(output_path, exist_ok=True)
 
-    files = [f for f in os.listdir(folder_path) if f.lower().endswith(('jpg', 'jpeg', 'png', 'bmp', 'tiff'))]
+    files = os.listdir(folder_path)
     if not files:
         logging.warning("No files found to resize. Please check the path.")
         return

@@ -1,23 +1,20 @@
 import os
 import logging
+import shutil
 from PIL import Image
 import pillow_heif
-import shutil
-import subprocess
 
-def convert_heic_to_jpeg(input_path, output_path):
+def heic_to_rgb(image_path, output_path, target_format='jpeg'):
     """
-    Convert a HEIC image to JPEG using multiple approaches (pillow-heif, sips).
+    Convert a HEIC image to the specified format using pillow-heif.
 
     Parameters:
-        input_path (str): Path to the HEIC image.
+        image_path (str): Path to the HEIC image.
         output_path (str): Path to save the converted image.
-
-    Returns:
-        bool: True if conversion was successful, False otherwise.
+        target_format (str): Format to convert to (default: 'jpeg').
     """
     try:
-        heif_image = pillow_heif.open_heif(input_path)
+        heif_image = pillow_heif.open_heif(image_path)
         image = Image.frombytes(
             heif_image.mode,
             heif_image.size,
@@ -26,70 +23,77 @@ def convert_heic_to_jpeg(input_path, output_path):
             heif_image.mode,
             heif_image.stride,
         )
-        image.convert("RGB").save(output_path, format="JPEG")
-        logging.info(f"Successfully converted {input_path} using pillow-heif.")
-        return True
+        image.convert("RGB").save(output_path, format=target_format.upper())
+        logging.info(f"Successfully converted {image_path} to {target_format.upper()}")
     except Exception as e:
-        logging.warning(f"pillow-heif failed for {input_path}, error: {e}")
+        logging.error(f"Failed to convert {image_path}: {e}")
+        raise
 
-    try:
-        # Using macOS sips command as a fallback
-        command = f"sips -s format jpeg '{input_path}' --out '{output_path}'"
-        result = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        if result.returncode == 0:
-            logging.info(f"Successfully converted {input_path} using sips.")
-            return True
-    except Exception as e:
-        logging.warning(f"sips failed for {input_path}, error: {e}")
-
-    logging.error(f"Failed to convert HEIC file: {input_path}")
-    return False
-
-
-def process_all_images(source_folder, destination_folder):
+def process_images(source_folder, destination_folder, target_format='jpeg'):
     """
-    Process all images in the source folder by converting HEIC to JPEG 
-    and copying other image formats directly.
+    Process images from a source folder and copy them to a destination folder.
 
     Parameters:
-        source_folder (str): Folder containing original images.
+        source_folder (str): Folder containing the source images.
         destination_folder (str): Folder where processed images will be saved.
+        target_format (str): Target format for image conversion (default: 'jpeg').
 
     Returns:
-        dict: Summary containing counts of processed and copied images.
+        None
     """
-    if not os.path.exists(destination_folder):
-        os.makedirs(destination_folder)
+    try:
+        # Ensure the source folder exists
+        if not os.path.exists(source_folder):
+            logging.error(f"Source folder '{source_folder}' does not exist.")
+            return
 
-    image_extensions = ('.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.heic')
-    all_files = [f for f in os.listdir(source_folder) if f.lower().endswith(image_extensions)]
-
-    if not all_files:
-        logging.warning(f"No images found in {source_folder}")
-        return {"converted": 0, "copied": 0, "errors": 0}
-
-    converted_count = 0
-    copied_count = 0
-    error_count = 0
-
-    for file_name in all_files:
-        input_path = os.path.join(source_folder, file_name)
-        output_path = os.path.join(destination_folder, f"{os.path.splitext(file_name)[0]}.jpg")
-
-        if file_name.lower().endswith('.heic'):
-            if convert_heic_to_jpeg(input_path, output_path):
-                converted_count += 1
-            else:
-                error_count += 1
+        # Ensure the destination folder is clean
+        if not os.path.exists(destination_folder):
+            os.makedirs(destination_folder, exist_ok=True)
         else:
-            # Copy other formats directly
-            try:
-                shutil.copy2(input_path, os.path.join(destination_folder, file_name))
-                copied_count += 1
-                logging.info(f"Copied {file_name} to {destination_folder}")
-            except Exception as e:
-                logging.error(f"Failed to copy {file_name}: {e}")
-                error_count += 1
+            for file_name in os.listdir(destination_folder):
+                file_path = os.path.join(destination_folder, file_name)
+                try:
+                    os.remove(file_path)
+                except Exception as e:
+                    logging.warning(f"Failed to delete file {file_name}: {e}")
 
-    logging.info(f"Processing completed: {converted_count} HEIC converted, {copied_count} images copied, {error_count} errors.")
-    return {"converted": converted_count, "copied": copied_count, "errors": error_count}
+        # Ensure the converted folder exists inside the destination folder
+        converted_folder = os.path.join(destination_folder, "converted")
+        os.makedirs(converted_folder, exist_ok=True)
+
+        # Initialize counters
+        copied_count = 0
+        converted_count = 0
+        skipped_count = 0
+
+        # Process files in the source folder
+        for file_name in os.listdir(source_folder):
+            source_path = os.path.join(source_folder, file_name)
+            destination_path = os.path.join(destination_folder, f"{os.path.splitext(file_name)[0]}.{target_format}")
+
+            if not os.path.isfile(source_path):
+                logging.warning(f"Skipping non-file entry: {file_name}")
+                continue
+
+            try:
+                if file_name.lower().endswith('.heic'):
+                    heic_to_rgb(source_path, destination_path, target_format)
+                    shutil.move(destination_path, os.path.join(converted_folder, os.path.basename(destination_path)))
+                    converted_count += 1
+                else:
+                    with Image.open(source_path) as img:
+                        img.convert("RGB").save(destination_path, format=target_format.upper())
+                    copied_count += 1
+            except Exception as e:
+                logging.warning(f"Skipped file {file_name} due to error: {e}")
+                skipped_count += 1
+
+        # Log summary
+        logging.info(f"Summary of image processing:")
+        logging.info(f" - Copied without conversion: {copied_count}")
+        logging.info(f" - Converted from HEIC to {target_format.upper()}: {converted_count}")
+        logging.info(f" - Skipped files (not processed): {skipped_count}")
+
+    except Exception as e:
+        logging.error(f"An error occurred during image processing: {e}")

@@ -1,6 +1,6 @@
 import os
 import logging
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 
 def resize_images(folder_path, output_path, size=(256, 256)):
     """
@@ -12,28 +12,43 @@ def resize_images(folder_path, output_path, size=(256, 256)):
         size (tuple): Desired size for the resized images (width, height).
 
     Returns:
-        list: List of resized image filenames.
+        None
     """
-    if not os.path.exists(folder_path):
-        logging.error(f"Source folder not found: {folder_path}")
-        return []
+    logging.info("Starting resizing process...")
 
     if not os.path.exists(output_path):
         os.makedirs(output_path, exist_ok=True)
 
-    resized_files = []
-    for file_name in os.listdir(folder_path):
+    files = [f for f in os.listdir(folder_path) if f.lower().endswith(('jpg', 'jpeg', 'png', 'bmp', 'tiff'))]
+    if not files:
+        logging.warning("No files found to resize. Please check the path.")
+        return
+
+    resized_count = 0
+    failed_count = 0
+
+    for file_name in files:
         file_path = os.path.join(folder_path, file_name)
         output_file_path = os.path.join(output_path, file_name)
 
         try:
             with Image.open(file_path) as img:
-                img_resized = img.resize(size)
-                img_resized.save(output_file_path)
-                resized_files.append(file_name)
-                logging.info(f"Resized: {file_name}")
-        except Exception as e:
-            logging.error(f"Error resizing {file_name}: {e}")
+                img.verify()  # Verifica se a imagem não está corrompida
 
-    logging.info(f"Total images resized: {len(resized_files)}")
-    return resized_files
+            # Reabrir após a verificação para evitar erros ao redimensionar
+            with Image.open(file_path) as img:
+                img = img.convert("RGB")
+                img_resized = img.resize(size, Image.Resampling.LANCZOS)
+                img_resized.save(output_file_path, quality=90)
+
+            logging.info(f"Resized and saved: {output_file_path}")
+            resized_count += 1
+
+        except UnidentifiedImageError:
+            logging.error(f"Unidentified or corrupt image: {file_name}")
+            failed_count += 1
+        except Exception as e:
+            logging.error(f"Error processing {file_name}: {e}")
+            failed_count += 1
+
+    logging.info(f"Resizing process completed: {resized_count} files resized, {failed_count} files failed.")
