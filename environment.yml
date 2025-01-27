@@ -1,22 +1,26 @@
-name: snapscrub
+name: snapscrub  # The name of the Conda environment to be created.
+
 channels:
-  - conda-forge
-  - defaults
+  - conda-forge  # Community-maintained channel with updated and optimized packages.
+  - defaults     # The official Anaconda channel with stable releases.
+
 dependencies:
-  - python=3.9
-  - numpy
-  - pandas
-  - opencv
-  - pillow
-  - scikit-image
-  - tensorflow
-  - pytorch
-  - torchvision
-  - torchaudio
-  - imagehash
-  - pip
+  - python=3.9       # Specifies the Python version to ensure compatibility with dependencies.
+  - numpy            # Library for numerical computing and matrix operations.
+  - pandas           # Data manipulation and analysis library.
+  - opencv           # Computer vision library for image processing tasks.
+  - pillow           # Python Imaging Library (PIL) for working with images.
+  - scikit-image     # Image processing library based on NumPy.
+  - tensorflow       # Deep learning framework used for training and inference.
+  - pytorch          # Another deep learning framework commonly used in research and production.
+  - torchvision      # Provides image transformations and pre-trained models for PyTorch.
+  - torchaudio       # Provides audio processing utilities for PyTorch.
+  - imagehash        # Library for computing perceptual hashes to detect duplicate images.
+  - pip              # Python package manager to install additional dependencies.
+
+  # Additional packages to be installed via pip (Python Package Index)
   - pip:
-      - ftfy
-      - regex
-      - tqdm
-      - pillow-heif
+      - ftfy         # Fixes text encoding issues.
+      - regex        # Regular expressions with advanced features.
+      - tqdm         # Progress bars for loops and command-line interfaces.
+      - pillow-heif  # Library to process HEIF/HEIC image formats.
