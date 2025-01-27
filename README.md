@@ -32,7 +32,6 @@ SnapScrub/
 ├── .gitignore       # Specifies files/folders to ignore in Git
 ├── LICENSE          # Project license information
 ├── README.md        # Project documentation
-├── clear_data.py    # Data cleanup script
 ├── environment.yml  # Conda environment configuration file
 ├── main.py          # Main script to run the pipeline
 └── setup.py         # Project installation script
