@@ -4,7 +4,6 @@ import numpy as np
 import torch
 from tensorflow.keras.preprocessing import image
 from PIL import Image
-import clip
 
 def evaluate_image_models(image_path, model_map, framework="tensorflow"):
     """
@@ -34,21 +33,11 @@ def evaluate_image_models(image_path, model_map, framework="tensorflow"):
         elif framework == "pytorch":
             img = Image.open(image_path).convert("RGB")
             for model_name, (model, preprocess) in model_map.items():
-                if model_name == "clip":
-                    img_preprocessed = preprocess(img).unsqueeze(0)
-                    model.eval()
-                    with torch.no_grad():
-                        text = clip.tokenize(["aesthetic photo", "high-quality image"])
-                        image_features = model.encode_image(img_preprocessed)
-                        text_features = model.encode_text(text)
-                        similarity = torch.cosine_similarity(image_features, text_features)
-                        scores[model_name] = similarity[0].item()
-                else:
-                    img_preprocessed = preprocess(img).unsqueeze(0)
-                    model.eval()
-                    with torch.no_grad():
-                        features = model(img_preprocessed).flatten()
-                    scores[model_name] = features.norm().item()
+                img_preprocessed = preprocess(img).unsqueeze(0)
+                model.eval()
+                with torch.no_grad():
+                    features = model(img_preprocessed).flatten()
+                scores[model_name] = features.norm().item()
 
         return scores
     except Exception as e:

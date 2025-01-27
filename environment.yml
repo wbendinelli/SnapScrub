@@ -3,22 +3,20 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python
+  - python=3.9
   - numpy
   - pandas
   - opencv
+  - pillow
+  - scikit-image
+  - tensorflow
   - pytorch
   - torchvision
-  - tensorflow
-  - scikit-image
-  - jupyterlab
-  - tqdm
-  - pip
-  - pyheif
-  - pillow-heif
+  - torchaudio
   - imagehash
+  - pip
   - pip:
-      - torch
-      - transformers
-      - pillow
-      - git+https://github.com/openai/CLIP.git
+      - ftfy
+      - regex
+      - tqdm
+      - pillow-heif

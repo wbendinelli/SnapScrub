@@ -9,7 +9,6 @@ from tensorflow.keras.applications.inception_resnet_v2 import preprocess_input a
 from tensorflow.keras.applications.resnet import preprocess_input as resnet_preprocess
 from tensorflow.keras.applications.efficientnet import preprocess_input as efficientnet_preprocess
 from tensorflow.keras.applications.densenet import preprocess_input as densenet_preprocess
-import clip
 
 def get_model_map(framework="tensorflow"):
     """
@@ -42,7 +41,6 @@ def get_model_map(framework="tensorflow"):
             "resnet34": (models.resnet34(pretrained=True), preprocess),
             "efficientnet_b0": (models.efficientnet_b0(pretrained=True), preprocess),
             "vision_transformer": (models.vit_b_16(pretrained=True), preprocess)
-            #"clip": (clip.load("ViT-B/32")[0], clip.load("ViT-B/32")[1]),  # CLIP Model
         }
     else:
         raise ValueError("Unsupported framework. Choose 'tensorflow' or 'pytorch'.")
