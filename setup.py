@@ -3,8 +3,8 @@ from setuptools import setup, find_packages
 setup(
     name="snapscrub",
     version="1.0.0",
-    author="Your Name",
-    author_email="your.email@example.com",
+    author="William Bendinelli",
+    author_email="wbendinelli@gmail.com",
     description="SnapScrub - An advanced image processing and classification pipeline.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
