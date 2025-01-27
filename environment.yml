@@ -16,7 +16,9 @@ dependencies:
   - pip
   - pyheif
   - pillow-heif
+  - imagehash
   - pip:
       - torch
       - transformers
       - pillow
+      - git+https://github.com/openai/CLIP.git
