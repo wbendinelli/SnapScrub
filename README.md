@@ -1,28 +1,41 @@
-# Image Classification Project
+# SnapScrub - Automated Image Classification
 
 ## 📌 Overview
-The **Image Classification** project automates the process of selecting and organizing high-quality images using advanced AI models. It evaluates images based on sharpness, exposure, and similarity, ensuring optimal selection.
+**SnapScrub** automates the process of selecting and organizing high-quality images using advanced AI models. The pipeline evaluates images based on sharpness, exposure, and similarity, ensuring the best selection for photography, social media, and digital marketing.
 
-### 🎯 Key Features
+---
+
+## 🎯 Key Features
+
 - **Automatic Image Processing:** Resize, rename, and clean images.
 - **Quality Assessment:** Sharpness and exposure scoring.
 - **Duplicate Removal:** SSIM-based and deep learning embedding comparisons.
 - **Cross-Framework Compatibility:** Supports TensorFlow and PyTorch models.
 - **Configurable Pipeline:** Adjustable via `config.yaml`.
+- **AI-Based Scoring:** Deep learning models to rank images by visual quality.
+- **Customizable Selection:** Configurable thresholds to fine-tune image selection.
 
 ---
 
 ## 📁 Project Structure
 
 ```
-Image_Classification/
-📂 src/         # Source code for image processing
-📂 tests/       # Test scripts
-📂 data/        # Raw and processed images
-📂 results/     # Final output images
-📂 notebooks/   # Jupyter notebooks for analysis
-📄 requirements.txt
-📄 README.md
+SnapScrub/
+├── notebooks/       # Jupyter notebooks for exploratory analysis
+├── scripts/         # Auxiliary scripts for specific tasks
+├── src/             # Main source code for image processing
+│   ├── data/        # Modules for data manipulation and preparation
+│   ├── evaluation/  # Modules for image quality assessment
+│   ├── models/      # AI model implementations for prediction
+│   ├── results/     # Modules for results management
+│   └── utils/       # Utility and helper functions
+├── .gitignore       # Specifies files/folders to ignore in Git
+├── LICENSE          # Project license information
+├── README.md        # Project documentation
+├── clear_data.py    # Data cleanup script
+├── environment.yml  # Conda environment configuration file
+├── main.py          # Main script to run the pipeline
+└── setup.py         # Project installation script
 ```
 
 ---
@@ -36,16 +49,25 @@ Image_Classification/
 - OpenCV
 - Pandas and NumPy
 
-### Steps
+### Installation Steps
+
 ```bash
-git clone https://github.com/yourusername/image-classification.git
-cd image-classification
+git clone https://github.com/wbendinelli/SnapScrub.git
+cd SnapScrub
 pip install -r requirements.txt
+```
+
+To install using Conda:
+
+```bash
+conda env create -f environment.yml
+conda activate snapscrub
 ```
 
 ---
 
 ## ⚙️ Configuration
+
 Modify `config.yaml` to adjust processing parameters:
 
 ```yaml
@@ -63,29 +85,32 @@ evaluation_criteria:
 
 ## 🚀 Usage
 
-### Run full pipeline:
+### Run the full pipeline:
 ```bash
-python src/main.py --stage all
+python main.py
 ```
 
 ### Run specific stages:
 ```bash
-python src/main.py --stage resize
-python src/main.py --stage evaluate
-python src/main.py --stage select
+python main.py --stage resize
+python main.py --stage evaluate
+python main.py --stage select
 ```
 
 ---
 
 ## 🔍 Evaluation Metrics
 
-- **Sharpness:** Measures image clarity.
-- **Exposure:** Detects under/over-exposure.
-- **Similarity:** Removes duplicates.
+- **Sharpness:** Measures image clarity and detail level.
+- **Exposure:** Detects under/over-exposure in images.
+- **Similarity:** Detects and removes duplicate images using multiple algorithms.
 
 ---
 
 ## 🧪 Running Tests
+
+To run unit tests, execute:
+
 ```bash
 pytest tests/
 ```
@@ -93,7 +118,8 @@ pytest tests/
 ---
 
 ## 📊 Results
-Final selected images are stored in the `results/` folder.
+
+Final selected images are stored in the `results/` folder, organized by framework and model.
 
 ---
 
@@ -102,23 +128,29 @@ Final selected images are stored in the `results/` folder.
 - Wang, Z., Bovik, A. C., Sheikh, H. R., & Simoncelli, E. P. (2004). "Image quality assessment: from error visibility to structural similarity". IEEE Transactions on Image Processing, 13(4), 600-612.
 - He, K., Zhang, X., Ren, S., & Sun, J. (2016). "Deep residual learning for image recognition". In Proceedings of the IEEE conference on computer vision and pattern recognition (pp. 770-778).
 - Howard, A. G., et al. (2017). "MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications". arXiv preprint arXiv:1704.04861.
-- TensorFlow Documentation: https://www.tensorflow.org/api_docs
-- PyTorch Documentation: https://pytorch.org/docs/stable/index.html
+- [TensorFlow Documentation](https://www.tensorflow.org/api_docs)
+- [PyTorch Documentation](https://pytorch.org/docs/stable/index.html)
 
 ---
 
 ## 💡 Future Improvements
-- GPU acceleration support.
-- Web-based UI for preview.
-- AI-driven enhancements.
+
+- GPU acceleration support for faster processing.
+- Web-based user interface for image preview and selection.
+- AI-driven aesthetic scoring using social media engagement prediction.
+- Integration with cloud storage services (AWS, GCP).
 
 ---
 
 ## 🤝 Contributing
 
+We welcome contributions! Follow these steps:
+
 1. Fork the repository.
-2. Create a feature branch.
-3. Commit changes and create a pull request.
+2. Create a new feature branch (`git checkout -b feature-branch`).
+3. Commit your changes (`git commit -m "Add new feature"`).
+4. Push the changes (`git push origin feature-branch`).
+5. Open a Pull Request for review.
 
 ---
 
@@ -129,7 +161,5 @@ This project is licensed under the MIT License.
 ---
 
 ## 📬 Contact
-For inquiries, please reach out via [GitHub Issues](https://github.com/yourusername/image-classification/issues).
 
----
-
+For inquiries or support, please open a [GitHub Issue](https://github.com/wbendinelli/SnapScrub/issues).
